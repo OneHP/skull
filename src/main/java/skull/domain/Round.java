@@ -1,14 +1,13 @@
 package skull.domain;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.List;
 
 @Entity
-public class Round {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class Round extends PersistableDomainObject{
 
     @OneToOne
     private Player startingPlayer;
@@ -18,14 +17,6 @@ public class Round {
 
     public Round() {
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Player getStartingPlayer() {

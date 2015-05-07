@@ -6,11 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class PlayerState {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class PlayerState extends PersistableDomainObject{
 
     @ManyToOne
     private Player player;
@@ -23,14 +19,6 @@ public class PlayerState {
 
     public PlayerState(){
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Player getPlayer() {

@@ -4,11 +4,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class RoundState {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class RoundState extends PersistableDomainObject{
 
     private int maxBid;
 
@@ -23,14 +19,6 @@ public class RoundState {
 
     public RoundState(){
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public int getMaxBid() {

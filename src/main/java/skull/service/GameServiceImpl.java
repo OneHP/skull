@@ -58,7 +58,7 @@ public class GameServiceImpl implements GameService {
         if(numberOfPlayers < 2){
             throw new InsufficientPlayersException(numberOfPlayers,2);
         }
-        
+
         game.setStarted(true);
 
         Round round = new Round();

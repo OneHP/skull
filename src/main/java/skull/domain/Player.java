@@ -1,15 +1,10 @@
 package skull.domain;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 @Entity
-public class Player {
+public class Player extends PersistableDomainObject{
 
-    @Id
-    @GeneratedValue
-    private Long id;
     private String name;
 
     private int points;
@@ -21,14 +16,6 @@ public class Player {
         this.points = 0;
         this.skulls = 1;
         this.roses = 3;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
