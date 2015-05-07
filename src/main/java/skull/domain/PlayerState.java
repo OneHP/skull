@@ -47,7 +47,7 @@ public class PlayerState {
         this.cardsOnTable = cardsOnTable;
     }
 
-    public boolean isOutOfBidding() {
+    public boolean getOutOfBidding() {
         return outOfBidding;
     }
 

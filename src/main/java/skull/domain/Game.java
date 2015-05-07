@@ -43,6 +43,14 @@ public class Game {
         this.key = key;
     }
 
+    public boolean getStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
+
     public List<Player> getPlayers() {
         return players;
     }
