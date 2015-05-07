@@ -18,7 +18,9 @@ public class Player {
     private int roses;
 
     public Player(){
-
+        this.points = 0;
+        this.skulls = 1;
+        this.roses = 3;
     }
 
     public Long getId() {

@@ -15,6 +15,8 @@ public class Game {
 
     private String key;
 
+    private boolean started;
+
     @OneToMany
     private List<Player> players;
 
