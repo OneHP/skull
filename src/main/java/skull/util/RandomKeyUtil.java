@@ -17,7 +17,7 @@ public class RandomKeyUtil {
 
         StringBuilder builder = new StringBuilder();
 
-        for(int i = 0; i < 9; i++){
+        for(int i = 0; i < 8; i++){
             builder.append(CHARACTERS[random.nextInt(9)]);
         }
 
