@@ -21,12 +21,9 @@ public class GameServiceImpl implements GameService {
     @Transactional
     public Game createGame(String playerName) {
 
-        Player host = new Player();
-        host.setName(playerName);
-
         Game game = new Game();
         game.setKey(RandomKeyUtil.generateKey());
-        game.setPlayers(Lists.newArrayList(host));
+        game.setPlayers(Lists.newArrayList(Player.create(playerName)));
 
         return this.gameRepository.save(game);
     }
@@ -40,11 +37,8 @@ public class GameServiceImpl implements GameService {
     @Transactional
     public Game addPlayer(Long gameId, String playerName) {
 
-        Player player = new Player();
-        player.setName(playerName);
-
         final Game game = this.gameRepository.findOne(gameId);
-        game.getPlayers().add(player);
+        game.getPlayers().add(Player.create(playerName));
 
         return this.gameRepository.save(game);
     }

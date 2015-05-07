@@ -13,9 +13,7 @@ public class Player extends PersistableDomainObject{
     private int roses;
 
     public Player(){
-        this.points = 0;
-        this.skulls = 1;
-        this.roses = 3;
+
     }
 
     public String getName() {
@@ -48,5 +46,14 @@ public class Player extends PersistableDomainObject{
 
     public void setRoses(int roses) {
         this.roses = roses;
+    }
+
+    public static Player create(String name){
+        Player player = new Player();
+        player.setPoints(0);
+        player.setSkulls(1);
+        player.setRoses(3);
+        player.setName(name);
+        return player;
     }
 }
