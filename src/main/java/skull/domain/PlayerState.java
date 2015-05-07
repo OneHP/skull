@@ -1,5 +1,7 @@
 package skull.domain;
 
+import com.google.common.collect.Lists;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -61,5 +63,14 @@ public class PlayerState {
 
     public void setBid(int bid) {
         this.bid = bid;
+    }
+
+    public static PlayerState create(Player player){
+        PlayerState playerState = new PlayerState();
+        playerState.setBid(0);
+        playerState.setCardsOnTable(Lists.newArrayList());
+        playerState.setOutOfBidding(false);
+        playerState.setPlayer(player);
+        return playerState;
     }
 }

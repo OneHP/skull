@@ -1,9 +1,6 @@
 package skull.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -17,10 +14,10 @@ public class Game {
 
     private boolean started;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.PERSIST)
     private List<Player> players;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.PERSIST)
     private List<Round> rounds;
 
     public Game(){

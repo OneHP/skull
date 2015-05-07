@@ -13,7 +13,7 @@ public class Round {
     @OneToOne
     private Player startingPlayer;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.PERSIST)
     private List<RoundState> roundStates;
 
     public Round() {
