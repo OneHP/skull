@@ -12,6 +12,7 @@ import skull.util.RandomKeyUtil;
 
 import javax.transaction.Transactional;
 import java.util.Random;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,6 +112,58 @@ public class GameServiceImpl implements GameService {
         final RoundState nextRoundState = roundState.copy();
         final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
         nextRoundPlayerState.getCardsOnTable().add(card);
+
+        nextRoundState.setPlayerToAct(nextPlayerInTurn(game, playerActing));
+        round.getRoundStates().add(nextRoundState);
+
+        return this.gameRepository.save(game);
+    }
+
+    @Override
+    public Game bid(Long gameId, Long playerId, int bid) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, BiddingTooEarlyException, PlayerOutOfBiddingException, BidTooLowException {
+        final Game game = this.gameRepository.findOne(gameId);
+
+        if(!game.getStarted()){
+            throw new GameNotStartedException();
+        }
+
+        final Round round = Iterables.getLast(game.getRounds());
+        final RoundState roundState = Iterables.getLast(round.getRoundStates());
+
+        final Player playerToAct = roundState.getPlayerToAct();
+        final Player playerActing = this.playerRepository.findOne(playerId);
+
+        if(!playerToAct.equals(playerActing)){
+            throw new PlayerActingOutOfTurnException(playerActing,playerToAct);
+        }
+
+        if(roundState.getRoundPhase().equals(RoundPhase.RESOLUTION)){
+            throw new IncorrectRoundPhaseException(roundState.getRoundPhase(), RoundPhase.BIDDING);
+        }
+
+        final RoundState nextRoundState = roundState.copy();
+
+        if(roundState.getRoundPhase().equals(RoundPhase.LAYING)){
+            if(roundState.getPlayerStates().stream()
+                    .anyMatch(playerState -> playerState.getCardsOnTable().isEmpty())){
+                throw new BiddingTooEarlyException(playerActing);
+            }else {
+                nextRoundState.setRoundPhase(RoundPhase.BIDDING);
+            }
+        }
+
+        if(getPlayerState(roundState,playerActing).getOutOfBidding()){
+            throw new PlayerOutOfBiddingException(playerActing);
+        }
+
+        if(bid <= roundState.getMaxBid()){
+            throw new BidTooLowException(bid, roundState.getMaxBid());
+        }
+
+        final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
+
+        nextRoundState.setMaxBid(bid);
+        nextRoundPlayerState.setBid(bid);
 
         nextRoundState.setPlayerToAct(nextPlayerInTurn(game, playerActing));
         round.getRoundStates().add(nextRoundState);

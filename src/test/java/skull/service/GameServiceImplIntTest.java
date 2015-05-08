@@ -10,10 +10,7 @@ import skull.SkullApplication;
 import skull.domain.Card;
 import skull.domain.Game;
 import skull.domain.Player;
-import skull.service.exception.CardNotInHandException;
-import skull.service.exception.GameNotStartedException;
-import skull.service.exception.InsufficientPlayersException;
-import skull.service.exception.PlayerActingOutOfTurnException;
+import skull.service.exception.*;
 
 import javax.transaction.Transactional;
 
@@ -107,5 +104,65 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
         this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.SKULL);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
+    }
+
+    @Test
+    @Transactional
+    public void canBid() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player otherPlayer = game.getPlayers().stream()
+                .filter(player -> !player.equals(startingPlayer))
+                .findAny().get();
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
+        this.serviceUnderTest.bid(game.getId(), otherPlayer.getId(), 2);
+    }
+
+    @Test(expected = GameNotStartedException.class)
+    @Transactional
+    public void cannotBidAsGameNotYetStarted() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+
+        Player startingPlayer = game.getPlayers().get(0);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(),1);
+    }
+
+    @Test(expected = PlayerActingOutOfTurnException.class)
+    @Transactional
+    public void cannotBidAsActingOutOfTurn() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player otherPlayer = game.getPlayers().stream()
+                .filter(player -> !player.equals(startingPlayer))
+                .findAny().get();
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.bid(game.getId(), otherPlayer.getId(), 1);
+    }
+
+    @Test(expected = BidTooLowException.class)
+    @Transactional
+    public void cannotBidAsBidTooLow() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player otherPlayer = game.getPlayers().stream()
+                .filter(player -> !player.equals(startingPlayer))
+                .findAny().get();
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
+        this.serviceUnderTest.bid(game.getId(), otherPlayer.getId(), 1);
     }
 }
