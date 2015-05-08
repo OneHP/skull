@@ -10,7 +10,10 @@ import skull.SkullApplication;
 import skull.domain.Card;
 import skull.domain.Game;
 import skull.domain.Player;
+import skull.service.exception.CardNotInHandException;
+import skull.service.exception.GameNotStartedException;
 import skull.service.exception.InsufficientPlayersException;
+import skull.service.exception.PlayerActingOutOfTurnException;
 
 import javax.transaction.Transactional;
 
@@ -63,7 +66,46 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
+    }
 
+    @Test(expected = GameNotStartedException.class)
+    @Transactional
+    public void cannotLayCardAsGameNotYetStarted() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+
+        Player startingPlayer = game.getPlayers().get(0);
         this.serviceUnderTest.layCard(game.getId(),startingPlayer.getId(), Card.SKULL);
+    }
+
+    @Test(expected = PlayerActingOutOfTurnException.class)
+    @Transactional
+    public void cannotLayCardAsActingOutOfTurn() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player otherPlayer = game.getPlayers().stream()
+                .filter(player -> !player.equals(startingPlayer))
+                .findAny().get();
+        this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.SKULL);
+    }
+
+    @Test(expected = CardNotInHandException.class)
+    @Transactional
+    public void cannotLayCardAsCardNotInHand() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player otherPlayer = game.getPlayers().stream()
+                .filter(player -> !player.equals(startingPlayer))
+                .findAny().get();
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
+        this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.SKULL);
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class RoundState extends PersistableDomainObject{
@@ -60,7 +61,7 @@ public class RoundState extends PersistableDomainObject{
         copy.setMaxBid(this.maxBid);
         copy.setRoundPhase(this.roundPhase);
         copy.setPlayerToAct(this.playerToAct);
-        copy.setPlayerStates(Lists.transform(this.playerStates,PlayerState::copy));
+        copy.setPlayerStates(this.playerStates.stream().map(PlayerState::copy).collect(Collectors.toList()));
         return copy;
     }
 }

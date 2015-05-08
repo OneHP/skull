@@ -11,8 +11,8 @@ import skull.service.exception.*;
 import skull.util.RandomKeyUtil;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class GameServiceImpl implements GameService {
@@ -69,11 +69,9 @@ public class GameServiceImpl implements GameService {
         initialRoundState.setMaxBid(0);
         initialRoundState.setRoundPhase(RoundPhase.LAYING);
         initialRoundState.setPlayerToAct(round.getStartingPlayer());
-        List<PlayerState> playerStates = Lists.newArrayList();
-        for(Player player:game.getPlayers()){
-            playerStates.add(PlayerState.create(player));
-        }
-        initialRoundState.setPlayerStates(playerStates);
+        initialRoundState.setPlayerStates(game.getPlayers().stream()
+                .map(player -> PlayerState.create(player))
+                .collect(Collectors.toList()));
 
         round.setRoundStates(Lists.newArrayList(initialRoundState));
         game.setRounds(Lists.newArrayList(round));
