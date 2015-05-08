@@ -7,8 +7,12 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import skull.SkullApplication;
+import skull.domain.Card;
 import skull.domain.Game;
+import skull.domain.Player;
 import skull.service.exception.InsufficientPlayersException;
+
+import javax.transaction.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = SkullApplication.class)
@@ -49,5 +53,17 @@ public class GameServiceImplIntTest {
     public void failsToStartGameWithOnePlayer() throws InsufficientPlayersException {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
+    }
+
+    @Test
+    @Transactional
+    public void canLayCard() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+
+        this.serviceUnderTest.layCard(game.getId(),startingPlayer.getId(), Card.SKULL);
     }
 }

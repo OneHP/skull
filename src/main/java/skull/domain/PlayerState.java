@@ -8,7 +8,7 @@ import java.util.List;
 @Entity
 public class PlayerState extends PersistableDomainObject{
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Player player;
 
     @ElementCollection(targetClass=Card.class)
@@ -59,6 +59,15 @@ public class PlayerState extends PersistableDomainObject{
         playerState.setCardsOnTable(Lists.newArrayList());
         playerState.setOutOfBidding(false);
         playerState.setPlayer(player);
+        return playerState;
+    }
+
+    public PlayerState copy(){
+        PlayerState playerState = new PlayerState();
+        playerState.setBid(this.bid);
+        playerState.setCardsOnTable(this.cardsOnTable);
+        playerState.setOutOfBidding(this.outOfBidding);
+        playerState.setPlayer(this.player);
         return playerState;
     }
 }

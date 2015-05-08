@@ -31,11 +31,18 @@ public abstract class PersistableDomainObject {
 
     @Override
     public boolean equals(Object other){
-        return EqualsBuilder.reflectionEquals(this, other);
+        if(other != null && other instanceof PersistableDomainObject){
+            return 0 == Long.compare(this.id,((PersistableDomainObject) other).id);
+        }
+        return false;
     }
 
     @Override
     public int hashCode(){
         return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    public boolean deepEquals(Object other){
+        return EqualsBuilder.reflectionEquals(this, other);
     }
 }

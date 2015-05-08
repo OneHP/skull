@@ -1,18 +1,15 @@
 package skull.domain;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
 public class Round extends PersistableDomainObject{
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Player startingPlayer;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<RoundState> roundStates;
 
     public Round() {

@@ -1,7 +1,9 @@
 package skull.service;
 
+import skull.domain.Card;
 import skull.domain.Game;
-import skull.service.exception.InsufficientPlayersException;
+import skull.domain.Player;
+import skull.service.exception.*;
 
 public interface GameService {
 
@@ -12,4 +14,7 @@ public interface GameService {
     Game addPlayer(Long gameId, String playerName);
 
     Game startGame(Long gameId) throws InsufficientPlayersException;
+
+    Game layCard(Long gameId, Long playerId, Card card) throws PlayerActingOutOfTurnException, IncorrectRoundPhaseException, CardNotInHandException, GameNotStartedException;
+
 }

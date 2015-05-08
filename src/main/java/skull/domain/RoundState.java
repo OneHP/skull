@@ -1,5 +1,7 @@
 package skull.domain;
 
+import com.google.common.collect.Lists;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -8,13 +10,13 @@ public class RoundState extends PersistableDomainObject{
 
     private int maxBid;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PlayerState> playerStates;
 
     @Enumerated(EnumType.STRING)
     private RoundPhase roundPhase;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Player playerToAct;
 
     public RoundState(){
@@ -51,5 +53,14 @@ public class RoundState extends PersistableDomainObject{
 
     public void setPlayerToAct(Player playerToAct) {
         this.playerToAct = playerToAct;
+    }
+
+    public RoundState copy(){
+        RoundState copy = new RoundState();
+        copy.setMaxBid(this.maxBid);
+        copy.setRoundPhase(this.roundPhase);
+        copy.setPlayerToAct(this.playerToAct);
+        copy.setPlayerStates(Lists.transform(this.playerStates,PlayerState::copy));
+        return copy;
     }
 }

@@ -12,10 +12,10 @@ public class Game extends PersistableDomainObject{
 
     private boolean started;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Player> players;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Round> rounds;
 
     public Game(){

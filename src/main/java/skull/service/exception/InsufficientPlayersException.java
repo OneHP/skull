@@ -10,4 +10,12 @@ public class InsufficientPlayersException extends Exception {
         this.playerCount = playerCount;
         this.requiredPlayers = requiredPlayers;
     }
+
+    public int getPlayerCount() {
+        return playerCount;
+    }
+
+    public int getRequiredPlayers() {
+        return requiredPlayers;
+    }
 }
