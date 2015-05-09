@@ -195,6 +195,13 @@ public class GameServiceImpl implements GameService {
         nextRoundPlayerState.setOutOfBidding(true);
 
         nextRoundState.setPlayerToAct(nextPlayerInTurn(game, nextRoundState, playerActing));
+
+        if(nextRoundState.getPlayerStates().stream()
+                .filter(playerState -> !playerState.getOutOfBidding())
+                .count() < 2){
+           nextRoundState.setRoundPhase(RoundPhase.RESOLUTION);
+        }
+
         round.getRoundStates().add(nextRoundState);
 
         return this.gameRepository.save(game);
