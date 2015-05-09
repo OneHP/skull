@@ -165,4 +165,22 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
         this.serviceUnderTest.bid(game.getId(), otherPlayer.getId(), 1);
     }
+
+    @Test(expected = BidTooHighException.class)
+    @Transactional
+    public void cannotBidAsBidTooHigh() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player otherPlayer = game.getPlayers().stream()
+                .filter(player -> !player.equals(startingPlayer))
+                .findAny().get();
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
+        this.serviceUnderTest.bid(game.getId(), otherPlayer.getId(), 2);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 3);
+    }
 }

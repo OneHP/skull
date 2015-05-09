@@ -17,6 +17,6 @@ public interface GameService {
 
     Game layCard(Long gameId, Long playerId, Card card) throws PlayerActingOutOfTurnException, IncorrectRoundPhaseException, CardNotInHandException, GameNotStartedException;
 
-    Game bid(Long gameId, Long playerId, int bid) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, BiddingTooEarlyException, PlayerOutOfBiddingException, BidTooLowException;
+    Game bid(Long gameId, Long playerId, int bid) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, BiddingTooEarlyException, PlayerOutOfBiddingException, BidTooLowException, BidTooHighException;
 
 }

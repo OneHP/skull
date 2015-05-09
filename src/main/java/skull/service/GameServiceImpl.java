@@ -120,7 +120,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Game bid(Long gameId, Long playerId, int bid) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, BiddingTooEarlyException, PlayerOutOfBiddingException, BidTooLowException {
+    public Game bid(Long gameId, Long playerId, int bid) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, BiddingTooEarlyException, PlayerOutOfBiddingException, BidTooLowException, BidTooHighException {
         final Game game = this.gameRepository.findOne(gameId);
 
         if(!game.getStarted()){
@@ -158,6 +158,13 @@ public class GameServiceImpl implements GameService {
 
         if(bid <= roundState.getMaxBid()){
             throw new BidTooLowException(bid, roundState.getMaxBid());
+        }
+
+        final Integer cardsOnTable = roundState.getPlayerStates().stream()
+                .map(playerState -> playerState.getCardsOnTable().size())
+                .reduce((a, b) -> a + b).get();
+        if(bid > cardsOnTable){
+            throw new BidTooHighException(bid,cardsOnTable);
         }
 
         final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
