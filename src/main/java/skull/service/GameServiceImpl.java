@@ -111,6 +111,7 @@ public class GameServiceImpl implements GameService {
         final RoundState nextRoundState = roundState.copy();
         final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
         nextRoundPlayerState.getCardsOnTable().add(card);
+        nextRoundPlayerState.getHand().playCard(card);
 
         nextRoundState.setPlayerToAct(nextPlayerInTurn(game, nextRoundState, playerActing));
         round.getRoundStates().add(nextRoundState);
@@ -215,13 +216,9 @@ public class GameServiceImpl implements GameService {
 
     private boolean playerHasCardInHand(PlayerState playerState, Card card) {
         if(card.equals(Card.SKULL)){
-            return playerState.getCardsOnTable().stream()
-                    .filter(c -> c.equals(Card.SKULL))
-                    .count() < playerState.getPlayer().getSkulls();
+            return playerState.getHand().getSkulls() > 0;
         }
-        return playerState.getCardsOnTable().stream()
-                .filter(c -> c.equals(Card.ROSE))
-                .count() < playerState.getPlayer().getRoses();
+        return playerState.getHand().getRoses() > 0;
     }
 
     private Player nextPlayerInTurn(Game game, RoundState roundState, Player playerActing) {

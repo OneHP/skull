@@ -11,6 +11,9 @@ public class PlayerState extends PersistableDomainObject{
     @ManyToOne(cascade = CascadeType.ALL)
     private Player player;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Hand hand;
+
     @ElementCollection(targetClass=Card.class)
     @Enumerated(EnumType.STRING)
     private List<Card> cardsOnTable;
@@ -27,6 +30,14 @@ public class PlayerState extends PersistableDomainObject{
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public Hand getHand() {
+        return hand;
+    }
+
+    public void setHand(Hand hand) {
+        this.hand = hand;
     }
 
     public List<Card> getCardsOnTable() {
@@ -59,6 +70,7 @@ public class PlayerState extends PersistableDomainObject{
         playerState.setCardsOnTable(Lists.newArrayList());
         playerState.setOutOfBidding(false);
         playerState.setPlayer(player);
+        playerState.setHand(Hand.create(player));
         return playerState;
     }
 
@@ -68,6 +80,7 @@ public class PlayerState extends PersistableDomainObject{
         playerState.setCardsOnTable(this.cardsOnTable);
         playerState.setOutOfBidding(this.outOfBidding);
         playerState.setPlayer(this.player);
+        playerState.setHand(this.hand.copy());
         return playerState;
     }
 }
