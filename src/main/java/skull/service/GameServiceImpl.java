@@ -112,14 +112,14 @@ public class GameServiceImpl implements GameService {
         final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
         nextRoundPlayerState.getCardsOnTable().add(card);
 
-        nextRoundState.setPlayerToAct(nextPlayerInTurn(game, playerActing));
+        nextRoundState.setPlayerToAct(nextPlayerInTurn(game, nextRoundState, playerActing));
         round.getRoundStates().add(nextRoundState);
 
         return this.gameRepository.save(game);
     }
 
     @Override
-    public Game bid(Long gameId, Long playerId, int bid) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, BiddingTooEarlyException, BidTooLowException, BidTooHighException {
+    public Game bid(Long gameId, Long playerId, int bid) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, BiddingTooEarlyException, BidTooLowException {
         final Game game = this.gameRepository.findOne(gameId);
 
         if(!game.getStarted()){
@@ -155,19 +155,12 @@ public class GameServiceImpl implements GameService {
             throw new BidTooLowException(bid, roundState.getMaxBid());
         }
 
-        final Integer cardsOnTable = roundState.getPlayerStates().stream()
-                .map(playerState -> playerState.getCardsOnTable().size())
-                .reduce((a, b) -> a + b).get();
-        if(bid > cardsOnTable){
-            throw new BidTooHighException(bid,cardsOnTable);
-        }
-
         final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
 
         nextRoundState.setMaxBid(bid);
         nextRoundPlayerState.setBid(bid);
 
-        nextRoundState.setPlayerToAct(nextPlayerInTurn(game, playerActing));
+        nextRoundState.setPlayerToAct(nextPlayerInTurn(game, nextRoundState, playerActing));
         round.getRoundStates().add(nextRoundState);
 
         return this.gameRepository.save(game);
@@ -201,7 +194,7 @@ public class GameServiceImpl implements GameService {
 
         nextRoundPlayerState.setOutOfBidding(true);
 
-        nextRoundState.setPlayerToAct(nextPlayerInTurn(game, playerActing));
+        nextRoundState.setPlayerToAct(nextPlayerInTurn(game, nextRoundState, playerActing));
         round.getRoundStates().add(nextRoundState);
 
         return this.gameRepository.save(game);
@@ -224,10 +217,13 @@ public class GameServiceImpl implements GameService {
                 .count() < playerState.getPlayer().getRoses();
     }
 
-    private Player nextPlayerInTurn(Game game, Player playerActing) {
-        return game.getPlayers().get(
-                (game.getPlayers().indexOf(playerActing) + 1) % game.getPlayers().size()
-        );
+    private Player nextPlayerInTurn(Game game, RoundState roundState, Player playerActing) {
+        Player nextPlayerInTurn = game.getPlayers().get(
+                (game.getPlayers().indexOf(playerActing) + 1) % game.getPlayers().size());
+        if(getPlayerState(roundState,nextPlayerInTurn).getOutOfBidding()){
+            return nextPlayerInTurn(game, roundState, nextPlayerInTurn);
+        }
+        return nextPlayerInTurn;
     }
 
 

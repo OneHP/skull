@@ -167,24 +167,6 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.bid(game.getId(), otherPlayer.getId(), 1);
     }
 
-    @Test(expected = BidTooHighException.class)
-    @Transactional
-    public void cannotBidAsBidTooHigh() throws Exception {
-        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.startGame(game.getId());
-
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player otherPlayer = game.getPlayers().stream()
-                .filter(player -> !player.equals(startingPlayer))
-                .findAny().get();
-        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
-        this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.ROSE);
-        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
-        this.serviceUnderTest.bid(game.getId(), otherPlayer.getId(), 2);
-        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 3);
-    }
-
     @Test
     @Transactional
     public void canOptOutOfBidding() throws Exception {
@@ -229,5 +211,34 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
         this.serviceUnderTest.optOutOfBidding(game.getId(), thirdPlayer.getId());
+    }
+
+    @Test
+    @Transactional
+    public void canOptOutOfBiddingAndPlayContinues() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
+        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 2);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), thirdPlayer.getId());
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 3);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 4);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 5);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 6);
+
     }
 }
