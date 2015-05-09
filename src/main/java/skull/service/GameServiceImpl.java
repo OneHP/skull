@@ -12,7 +12,6 @@ import skull.util.RandomKeyUtil;
 
 import javax.transaction.Transactional;
 import java.util.Random;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 @Service
@@ -120,7 +119,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Game bid(Long gameId, Long playerId, int bid) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, BiddingTooEarlyException, PlayerOutOfBiddingException, BidTooLowException, BidTooHighException {
+    public Game bid(Long gameId, Long playerId, int bid) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, BiddingTooEarlyException, BidTooLowException, BidTooHighException {
         final Game game = this.gameRepository.findOne(gameId);
 
         if(!game.getStarted()){
@@ -152,10 +151,6 @@ public class GameServiceImpl implements GameService {
             }
         }
 
-        if(getPlayerState(roundState,playerActing).getOutOfBidding()){
-            throw new PlayerOutOfBiddingException(playerActing);
-        }
-
         if(bid <= roundState.getMaxBid()){
             throw new BidTooLowException(bid, roundState.getMaxBid());
         }
@@ -178,6 +173,40 @@ public class GameServiceImpl implements GameService {
         return this.gameRepository.save(game);
     }
 
+    @Override
+    @Transactional
+    public Game optOutOfBidding(Long gameId, Long playerId) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException {
+        final Game game = this.gameRepository.findOne(gameId);
+
+        if(!game.getStarted()){
+            throw new GameNotStartedException();
+        }
+
+        final Round round = Iterables.getLast(game.getRounds());
+        final RoundState roundState = Iterables.getLast(round.getRoundStates());
+
+        final Player playerToAct = roundState.getPlayerToAct();
+        final Player playerActing = this.playerRepository.findOne(playerId);
+
+        if(!playerToAct.equals(playerActing)){
+            throw new PlayerActingOutOfTurnException(playerActing,playerToAct);
+        }
+
+        if(!roundState.getRoundPhase().equals(RoundPhase.BIDDING)){
+            throw new IncorrectRoundPhaseException(roundState.getRoundPhase(), RoundPhase.BIDDING);
+        }
+
+        final RoundState nextRoundState = roundState.copy();
+        final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
+
+        nextRoundPlayerState.setOutOfBidding(true);
+
+        nextRoundState.setPlayerToAct(nextPlayerInTurn(game, playerActing));
+        round.getRoundStates().add(nextRoundState);
+
+        return this.gameRepository.save(game);
+    }
+
     private PlayerState getPlayerState(RoundState roundState, Player playerActing) {
         return Iterables.find(
                 roundState.getPlayerStates(), (state -> state.getPlayer().equals(playerActing))
@@ -186,9 +215,13 @@ public class GameServiceImpl implements GameService {
 
     private boolean playerHasCardInHand(PlayerState playerState, Card card) {
         if(card.equals(Card.SKULL)){
-            return playerState.getCardsOnTable().stream().filter(c -> c.equals(Card.SKULL)).count() < playerState.getPlayer().getSkulls();
+            return playerState.getCardsOnTable().stream()
+                    .filter(c -> c.equals(Card.SKULL))
+                    .count() < playerState.getPlayer().getSkulls();
         }
-        return playerState.getCardsOnTable().stream().filter(c -> c.equals(Card.ROSE)).count() < playerState.getPlayer().getRoses();
+        return playerState.getCardsOnTable().stream()
+                .filter(c -> c.equals(Card.ROSE))
+                .count() < playerState.getPlayer().getRoses();
     }
 
     private Player nextPlayerInTurn(Game game, Player playerActing) {

@@ -21,6 +21,7 @@ public class GameServiceImplIntTest {
 
     private static String HOST_PLAYER_NAME = "Thomas";
     private static String SECOND_PLAYER_NAME = "Mike";
+    private static String THIRD_PLAYER_NAME = "Marie";
 
     @Autowired
     private GameService serviceUnderTest;
@@ -182,5 +183,51 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
         this.serviceUnderTest.bid(game.getId(), otherPlayer.getId(), 2);
         this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 3);
+    }
+
+    @Test
+    @Transactional
+    public void canOptOutOfBidding() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
+        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), secondPlayer.getId());
+    }
+
+    @Test(expected = GameNotStartedException.class)
+    @Transactional
+    public void cannotOptOutOfBiddingAsGameNotYetStarted() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+
+        Player startingPlayer = game.getPlayers().get(0);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), startingPlayer.getId());
+    }
+
+    @Test(expected = PlayerActingOutOfTurnException.class)
+    @Transactional
+    public void cannotOptOutOfBiddingAsActingOutOfTurn() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
+        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), thirdPlayer.getId());
     }
 }
