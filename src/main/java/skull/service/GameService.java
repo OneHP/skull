@@ -21,4 +21,6 @@ public interface GameService {
 
     Game optOutOfBidding(Long gameId, Long playerId) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException;
 
+    Game flipOwnCards(Long gameId, Long playerId) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, AlreadyRevealedCardException;
+
 }

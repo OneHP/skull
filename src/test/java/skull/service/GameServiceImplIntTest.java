@@ -295,4 +295,126 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.optOutOfBidding(game.getId(), thirdPlayer.getId());
         this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 2);
     }
+
+    @Test
+    @Transactional
+    public void canFlipOwnCards() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
+        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 2);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), thirdPlayer.getId());
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 4);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 5);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), startingPlayer.getId());
+        this.serviceUnderTest.flipOwnCards(game.getId(), secondPlayer.getId());
+    }
+
+    @Test(expected = GameNotStartedException.class)
+    @Transactional
+    public void cannotFlipOwnCardsAsGameNotYetStarted() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+
+        Player startingPlayer = game.getPlayers().get(0);
+        this.serviceUnderTest.flipOwnCards(game.getId(), startingPlayer.getId());
+    }
+
+    @Test(expected = PlayerActingOutOfTurnException.class)
+    @Transactional
+    public void cannotFlipOwnCardsAsActingOutOfTurn() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
+        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 2);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), thirdPlayer.getId());
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 4);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 5);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), startingPlayer.getId());
+        this.serviceUnderTest.flipOwnCards(game.getId(), thirdPlayer.getId());
+    }
+
+    @Test(expected = IncorrectRoundPhaseException.class)
+    @Transactional
+    public void cannotFlipOwnCardsAsWrongPhase() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
+        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 2);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), thirdPlayer.getId());
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 4);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 5);
+        this.serviceUnderTest.flipOwnCards(game.getId(), startingPlayer.getId());
+    }
+
+    @Test(expected = AlreadyRevealedCardException.class)
+    @Transactional
+    public void cannotFlipOwnCardsAsAlreadyFlipped() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
+        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
+
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 2);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), thirdPlayer.getId());
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 4);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 5);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), startingPlayer.getId());
+        this.serviceUnderTest.flipOwnCards(game.getId(), secondPlayer.getId());
+        this.serviceUnderTest.flipOwnCards(game.getId(), secondPlayer.getId());
+    }
 }

@@ -17,6 +17,9 @@ public class PlayerState extends PersistableDomainObject{
     @ElementCollection(targetClass=Card.class)
     @Enumerated(EnumType.STRING)
     private List<Card> cardsOnTable;
+
+    private int numberOfRevealedCards;
+
     private boolean outOfBidding;
     private int bid;
 
@@ -48,6 +51,14 @@ public class PlayerState extends PersistableDomainObject{
         this.cardsOnTable = cardsOnTable;
     }
 
+    public int getNumberOfRevealedCards() {
+        return numberOfRevealedCards;
+    }
+
+    public void setNumberOfRevealedCards(int numberOfRevealedCards) {
+        this.numberOfRevealedCards = numberOfRevealedCards;
+    }
+
     public boolean getOutOfBidding() {
         return outOfBidding;
     }
@@ -68,6 +79,7 @@ public class PlayerState extends PersistableDomainObject{
         PlayerState playerState = new PlayerState();
         playerState.setBid(0);
         playerState.setCardsOnTable(Lists.newArrayList());
+        playerState.setNumberOfRevealedCards(0);
         playerState.setOutOfBidding(false);
         playerState.setPlayer(player);
         playerState.setHand(Hand.create(player));
@@ -78,6 +90,7 @@ public class PlayerState extends PersistableDomainObject{
         PlayerState playerState = new PlayerState();
         playerState.setBid(this.bid);
         playerState.setCardsOnTable(this.cardsOnTable);
+        playerState.setNumberOfRevealedCards(this.numberOfRevealedCards);
         playerState.setOutOfBidding(this.outOfBidding);
         playerState.setPlayer(this.player);
         playerState.setHand(this.hand.copy());

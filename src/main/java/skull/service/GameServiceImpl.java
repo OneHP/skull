@@ -208,6 +208,56 @@ public class GameServiceImpl implements GameService {
         return this.gameRepository.save(game);
     }
 
+    @Override
+    public Game flipOwnCards(Long gameId, Long playerId) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, AlreadyRevealedCardException {
+        final Game game = this.gameRepository.findOne(gameId);
+
+        if(!game.getStarted()){
+            throw new GameNotStartedException();
+        }
+
+        final Round round = Iterables.getLast(game.getRounds());
+        final RoundState roundState = Iterables.getLast(round.getRoundStates());
+
+        final Player playerToAct = roundState.getPlayerToAct();
+        final Player playerActing = this.playerRepository.findOne(playerId);
+
+        if(!playerToAct.equals(playerActing)){
+            throw new PlayerActingOutOfTurnException(playerActing,playerToAct);
+        }
+
+        if(!roundState.getRoundPhase().equals(RoundPhase.RESOLUTION)){
+            throw new IncorrectRoundPhaseException(roundState.getRoundPhase(), RoundPhase.RESOLUTION);
+        }
+
+        if(getPlayerState(roundState,playerActing).getNumberOfRevealedCards() > 0){
+            throw new AlreadyRevealedCardException();
+        }
+
+        final RoundState nextRoundState = roundState.copy();
+        final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
+
+        nextRoundPlayerState.setNumberOfRevealedCards(nextRoundPlayerState.getCardsOnTable().size());
+
+        if (nextRoundPlayerState.getCardsOnTable().stream().anyMatch(card -> Card.SKULL.equals(card))){
+            loseRound(game, playerActing);
+        }else if(nextRoundPlayerState.getNumberOfRevealedCards() >= roundState.getMaxBid()){
+            winRound(game, playerActing);
+        }
+
+        round.getRoundStates().add(nextRoundState);
+
+        return this.gameRepository.save(game);
+    }
+
+    private void winRound(Game game, Player playerActing) {
+
+    }
+
+    private void loseRound(Game game, Player playerActing) {
+
+    }
+
     private PlayerState getPlayerState(RoundState roundState, Player playerActing) {
         return Iterables.find(
                 roundState.getPlayerStates(), (state -> state.getPlayer().equals(playerActing))
@@ -229,6 +279,5 @@ public class GameServiceImpl implements GameService {
         }
         return nextPlayerInTurn;
     }
-
 
 }
