@@ -56,4 +56,8 @@ public class Player extends PersistableDomainObject{
         player.setName(name);
         return player;
     }
+
+    public boolean hasCards(){
+        return (this.skulls + this.roses) > 0;
+    }
 }

@@ -4,19 +4,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import skull.SkullApplication;
 import skull.domain.Card;
 import skull.domain.Game;
+import skull.domain.PersistableDomainObjectMatcher;
 import skull.domain.Player;
 import skull.service.exception.*;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import javax.transaction.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = SkullApplication.class)
 @WebAppConfiguration
+@ActiveProfiles("testing")
 public class GameServiceImplIntTest {
 
     private static String HOST_PLAYER_NAME = "Thomas";
@@ -440,11 +446,12 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
         this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 2);
         this.serviceUnderTest.optOutOfBidding(game.getId(), thirdPlayer.getId());
-        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 4);
-        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 5);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 5);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 6);
         this.serviceUnderTest.optOutOfBidding(game.getId(), startingPlayer.getId());
         this.serviceUnderTest.flipOwnCards(game.getId(), secondPlayer.getId());
         this.serviceUnderTest.flipOtherPlayerCard(game.getId(), secondPlayer.getId(), thirdPlayer.getId(), 1);
+        this.serviceUnderTest.flipOtherPlayerCard(game.getId(), secondPlayer.getId(), startingPlayer.getId(), 1);
         this.serviceUnderTest.flipOtherPlayerCard(game.getId(), secondPlayer.getId(), thirdPlayer.getId(), 0);
     }
 
@@ -543,8 +550,8 @@ public class GameServiceImplIntTest {
     }
 
     @Test(expected = AlreadyRevealedCardException.class)
-    @Transactional
-    public void cannotFlipOtherPlayerCardAsAlreadyFlipped() throws Exception {
+     @Transactional
+     public void cannotFlipOtherPlayerCardAsAlreadyFlipped() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
         this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
@@ -570,5 +577,48 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.flipOwnCards(game.getId(), secondPlayer.getId());
         this.serviceUnderTest.flipOtherPlayerCard(game.getId(), secondPlayer.getId(), thirdPlayer.getId(), 1);
         this.serviceUnderTest.flipOtherPlayerCard(game.getId(), secondPlayer.getId(), thirdPlayer.getId(), 1);
+    }
+
+    @Test
+    @Transactional
+    public void canLoseGameByLosingSeveralRounds() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 2);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), startingPlayer.getId());
+        this.serviceUnderTest.flipOwnCards(game.getId(), secondPlayer.getId());
+        this.serviceUnderTest.flipOtherPlayerCard(game.getId(), secondPlayer.getId(), startingPlayer.getId(), 0);
+
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 2);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), startingPlayer.getId());
+        this.serviceUnderTest.flipOwnCards(game.getId(), secondPlayer.getId());
+        this.serviceUnderTest.flipOtherPlayerCard(game.getId(), secondPlayer.getId(), startingPlayer.getId(), 0);
+
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 2);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), startingPlayer.getId());
+        this.serviceUnderTest.flipOwnCards(game.getId(), secondPlayer.getId());
+        this.serviceUnderTest.flipOtherPlayerCard(game.getId(), secondPlayer.getId(), startingPlayer.getId(), 0);
+
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
+        this.serviceUnderTest.bid(game.getId(), secondPlayer.getId(), 2);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), startingPlayer.getId());
+        this.serviceUnderTest.flipOwnCards(game.getId(), secondPlayer.getId());
+        this.serviceUnderTest.flipOtherPlayerCard(game.getId(), secondPlayer.getId(), startingPlayer.getId(), 0);
+
+        assertThat(game.getStarted(), is(false));
+        assertThat(game.getWinner(),is(new PersistableDomainObjectMatcher(startingPlayer)));
     }
 }

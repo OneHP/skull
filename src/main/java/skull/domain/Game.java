@@ -3,6 +3,7 @@ package skull.domain;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.List;
 
 @Entity
@@ -14,6 +15,9 @@ public class Game extends PersistableDomainObject{
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Player> players;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Player winner;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Round> rounds;
@@ -44,6 +48,14 @@ public class Game extends PersistableDomainObject{
 
     public void setPlayers(List<Player> players) {
         this.players = players;
+    }
+
+    public Player getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Player winner) {
+        this.winner = winner;
     }
 
     public List<Round> getRounds() {

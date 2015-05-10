@@ -11,7 +11,6 @@ import skull.service.exception.*;
 import skull.util.RandomKeyUtil;
 
 import javax.transaction.Transactional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +21,9 @@ public class GameServiceImpl implements GameService {
 
     @Autowired
     private PlayerRepository playerRepository;
+
+    @Autowired
+    private RandomService randomService;
 
     @Override
     @Transactional
@@ -63,7 +65,7 @@ public class GameServiceImpl implements GameService {
         game.setStarted(true);
 
         Round round = new Round();
-        round.setStartingPlayer(game.getPlayers().get(new Random().nextInt(numberOfPlayers)));
+        round.setStartingPlayer(game.getPlayers().get(this.randomService.randomInt(numberOfPlayers)));
 
         RoundState initialRoundState = new RoundState();
         initialRoundState.setMaxBid(0);
@@ -109,7 +111,7 @@ public class GameServiceImpl implements GameService {
         }
 
         final RoundState nextRoundState = roundState.copy();
-        final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
+        final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState, playerActing);
         nextRoundPlayerState.getCardsOnTable().add(card);
         nextRoundPlayerState.getHand().playCard(card);
 
@@ -156,7 +158,7 @@ public class GameServiceImpl implements GameService {
             throw new BidTooLowException(bid, roundState.getMaxBid());
         }
 
-        final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
+        final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState, playerActing);
 
         nextRoundState.setMaxBid(bid);
         nextRoundPlayerState.setBid(bid);
@@ -191,7 +193,7 @@ public class GameServiceImpl implements GameService {
         }
 
         final RoundState nextRoundState = roundState.copy();
-        final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
+        final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState, playerActing);
 
         nextRoundPlayerState.setOutOfBidding(true);
 
@@ -235,7 +237,7 @@ public class GameServiceImpl implements GameService {
         }
 
         final RoundState nextRoundState = roundState.copy();
-        final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState,playerActing);
+        final PlayerState nextRoundPlayerState = getPlayerState(nextRoundState, playerActing);
 
         nextRoundPlayerState.setNumberOfRevealedCards(nextRoundPlayerState.getCardsOnTable().size());
 
@@ -284,7 +286,7 @@ public class GameServiceImpl implements GameService {
         }
 
         final RoundState nextRoundState = roundState.copy();
-        final PlayerState nextRoundOtherPlayerState = getPlayerState(nextRoundState,otherPlayer);
+        final PlayerState nextRoundOtherPlayerState = getPlayerState(nextRoundState, otherPlayer);
 
         nextRoundOtherPlayerState.setNumberOfRevealedCards(
                 nextRoundOtherPlayerState.getNumberOfRevealedCards() + 1
@@ -309,7 +311,37 @@ public class GameServiceImpl implements GameService {
     }
 
     private void loseRound(Game game, Player playerActing) {
+        if(playerActing.getSkulls() > 0 && this.randomService.randomInt(playerActing.getRoses()) == 0){
+            playerActing.setSkulls(0);
+        }else{
+            playerActing.setRoses(playerActing.getRoses() - 1);
+        }
 
+        if(game.getPlayers().stream()
+                .filter(Player::hasCards)
+                .count() < 2){
+            game.setStarted(false);
+            game.setWinner(game.getPlayers().stream()
+                    .filter(Player::hasCards)
+                    .findAny().get());
+        }else {
+            Round nextRound = new Round();
+            nextRound.setStartingPlayer(playerActing.hasCards()
+                    ? playerActing
+                    : nextPlayerInGame(game, playerActing));
+
+            RoundState nextRoundState = new RoundState();
+            nextRoundState.setMaxBid(0);
+            nextRoundState.setRoundPhase(RoundPhase.LAYING);
+            nextRoundState.setPlayerToAct(nextRound.getStartingPlayer());
+            nextRoundState.setPlayerStates(game.getPlayers().stream()
+                    .filter(fPlayer -> fPlayer.hasCards())
+                    .map(player -> PlayerState.create(player))
+                    .collect(Collectors.toList()));
+
+            nextRound.setRoundStates(Lists.newArrayList(nextRoundState));
+            game.getRounds().add(nextRound);
+        }
     }
 
     private PlayerState getPlayerState(RoundState roundState, Player playerActing) {
@@ -332,6 +364,16 @@ public class GameServiceImpl implements GameService {
             return nextPlayerInTurn(game, roundState, nextPlayerInTurn);
         }
         return nextPlayerInTurn;
+    }
+
+    private Player nextPlayerInGame(Game game,  Player playerActing) {
+        Player nextPlayerInGame = game.getPlayers().get(
+                (game.getPlayers().indexOf(playerActing) + 1) % game.getPlayers().size());
+        if(nextPlayerInGame.hasCards()){
+            return nextPlayerInGame;
+
+        }
+        return nextPlayerInGame(game, nextPlayerInGame);
     }
 
 }
