@@ -69,7 +69,7 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
+        Player startingPlayer = game.getPlayers().get(0);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
     }
 
@@ -90,10 +90,7 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player otherPlayer = game.getPlayers().stream()
-                .filter(player -> !player.equals(startingPlayer))
-                .findAny().get();
+        Player otherPlayer = game.getPlayers().get(1);
         this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.SKULL);
     }
 
@@ -104,10 +101,8 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player otherPlayer = game.getPlayers().stream()
-                .filter(player -> !player.equals(startingPlayer))
-                .findAny().get();
+        Player startingPlayer = game.getPlayers().get(0);
+        Player otherPlayer = game.getPlayers().get(1);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
         this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.SKULL);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
@@ -120,10 +115,8 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player otherPlayer = game.getPlayers().stream()
-                .filter(player -> !player.equals(startingPlayer))
-                .findAny().get();
+        Player startingPlayer = game.getPlayers().get(0);
+        Player otherPlayer = game.getPlayers().get(1);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
@@ -137,10 +130,8 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player otherPlayer = game.getPlayers().stream()
-                .filter(player -> !player.equals(startingPlayer))
-                .findAny().get();
+        Player startingPlayer = game.getPlayers().get(0);
+        Player otherPlayer = game.getPlayers().get(1);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
@@ -164,10 +155,8 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player otherPlayer = game.getPlayers().stream()
-                .filter(player -> !player.equals(startingPlayer))
-                .findAny().get();
+        Player startingPlayer = game.getPlayers().get(0);
+        Player otherPlayer = game.getPlayers().get(1);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.bid(game.getId(), otherPlayer.getId(), 1);
@@ -180,10 +169,8 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player otherPlayer = game.getPlayers().stream()
-                .filter(player -> !player.equals(startingPlayer))
-                .findAny().get();
+        Player startingPlayer = game.getPlayers().get(0);
+        Player otherPlayer = game.getPlayers().get(1);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
@@ -197,10 +184,8 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player otherPlayer = game.getPlayers().stream()
-                .filter(player -> !player.equals(startingPlayer))
-                .findAny().get();
+        Player startingPlayer = game.getPlayers().get(0);
+        Player otherPlayer = game.getPlayers().get(1);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), otherPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
@@ -216,9 +201,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
@@ -244,9 +229,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
@@ -262,9 +247,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
 
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
@@ -290,9 +275,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), thirdPlayer.getId(), Card.ROSE);
@@ -310,9 +295,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
 
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
@@ -348,9 +333,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
 
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
@@ -376,9 +361,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
 
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
@@ -403,9 +388,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
 
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
@@ -432,9 +417,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
 
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
@@ -474,9 +459,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
 
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
@@ -502,9 +487,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
 
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
@@ -529,9 +514,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
 
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
@@ -557,9 +542,9 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
-        Player startingPlayer = game.getRounds().get(0).getStartingPlayer();
-        Player secondPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 1) % 3);
-        Player thirdPlayer = game.getPlayers().get((game.getPlayers().indexOf(startingPlayer) + 2) % 3);
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+        Player thirdPlayer = game.getPlayers().get(2);
 
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
         this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
