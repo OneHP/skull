@@ -250,6 +250,60 @@ public class GameServiceImpl implements GameService {
         return this.gameRepository.save(game);
     }
 
+    @Override
+    public Game flipOtherPlayerCard(Long gameId, Long playerId, Long otherPlayerId, int index) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, NotYetRevealedOwnCardsException, AlreadyRevealedCardException {
+        final Game game = this.gameRepository.findOne(gameId);
+
+        if(!game.getStarted()){
+            throw new GameNotStartedException();
+        }
+
+        final Round round = Iterables.getLast(game.getRounds());
+        final RoundState roundState = Iterables.getLast(round.getRoundStates());
+
+        final Player playerToAct = roundState.getPlayerToAct();
+        final Player playerActing = this.playerRepository.findOne(playerId);
+
+        if(!playerToAct.equals(playerActing)){
+            throw new PlayerActingOutOfTurnException(playerActing,playerToAct);
+        }
+
+        if(!roundState.getRoundPhase().equals(RoundPhase.RESOLUTION)){
+            throw new IncorrectRoundPhaseException(roundState.getRoundPhase(), RoundPhase.RESOLUTION);
+        }
+
+        if(getPlayerState(roundState,playerActing).getNumberOfRevealedCards() == 0){
+            throw new NotYetRevealedOwnCardsException();
+        }
+
+        final Player otherPlayer = game.getPlayers().stream().filter(player -> otherPlayerId.equals(player.getId())).findAny().get();
+        final PlayerState otherPlayerState = getPlayerState(roundState, otherPlayer);
+
+        if(otherPlayerState.getNumberOfRevealedCards() >= otherPlayerState.getCardsOnTable().size() - index){
+            throw new AlreadyRevealedCardException();
+        }
+
+        final RoundState nextRoundState = roundState.copy();
+        final PlayerState nextRoundOtherPlayerState = getPlayerState(nextRoundState,otherPlayer);
+
+        nextRoundOtherPlayerState.setNumberOfRevealedCards(
+                nextRoundOtherPlayerState.getNumberOfRevealedCards() + 1
+        );
+
+        final Card card = otherPlayerState.getCardsOnTable().get(index);
+        if(Card.SKULL.equals(card)){
+            loseRound(game,playerActing);
+        }else if(nextRoundState.getPlayerStates().stream()
+                .map(playerState -> playerState.getNumberOfRevealedCards())
+                .reduce((a,b) -> a + b).get() >= roundState.getMaxBid()){
+            winRound(game,playerActing);
+        }
+
+        round.getRoundStates().add(nextRoundState);
+
+        return this.gameRepository.save(game);
+    }
+
     private void winRound(Game game, Player playerActing) {
 
     }

@@ -23,4 +23,14 @@ public interface GameService {
 
     Game flipOwnCards(Long gameId, Long playerId) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, AlreadyRevealedCardException;
 
+    /**
+     *
+     * @param gameId
+     * @param playerId
+     * @param otherPlayerId
+     * @param index Index of the card to be flipped. 0 indexed where 0 is the first card laid (bottom of pile, if there is more than one card).
+     * @return
+     */
+    Game flipOtherPlayerCard(Long gameId, Long playerId, Long otherPlayerId, int index) throws GameNotStartedException, PlayerActingOutOfTurnException, IncorrectRoundPhaseException, NotYetRevealedOwnCardsException, AlreadyRevealedCardException;
+
 }
