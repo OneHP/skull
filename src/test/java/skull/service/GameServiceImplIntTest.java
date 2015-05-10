@@ -604,6 +604,34 @@ public class GameServiceImplIntTest {
         this.serviceUnderTest.flipOtherPlayerCard(game.getId(), secondPlayer.getId(), startingPlayer.getId(), 0);
 
         assertThat(game.getStarted(), is(false));
+        assertThat(game.getWinner(), is(new PersistableDomainObjectMatcher(startingPlayer)));
+    }
+
+    @Test
+    @Transactional
+    public void canWinGameByWinningSeveralRounds() throws Exception {
+        final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.startGame(game.getId());
+
+        Player startingPlayer = game.getPlayers().get(0);
+        Player secondPlayer = game.getPlayers().get(1);
+
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 2);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), secondPlayer.getId());
+        this.serviceUnderTest.flipOwnCards(game.getId(), startingPlayer.getId());
+        this.serviceUnderTest.flipOtherPlayerCard(game.getId(), startingPlayer.getId(), secondPlayer.getId(), 0);
+
+        this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.layCard(game.getId(), secondPlayer.getId(), Card.ROSE);
+        this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 2);
+        this.serviceUnderTest.optOutOfBidding(game.getId(), secondPlayer.getId());
+        this.serviceUnderTest.flipOwnCards(game.getId(), startingPlayer.getId());
+        this.serviceUnderTest.flipOtherPlayerCard(game.getId(), startingPlayer.getId(), secondPlayer.getId(), 0);
+
+        assertThat(game.getStarted(), is(false));
         assertThat(game.getWinner(),is(new PersistableDomainObjectMatcher(startingPlayer)));
     }
 }

@@ -307,7 +307,27 @@ public class GameServiceImpl implements GameService {
     }
 
     private void winRound(Game game, Player playerActing) {
+        playerActing.setPoints(playerActing.getPoints() + 1);
 
+        if(playerActing.getPoints() == 2){
+            game.setStarted(false);
+            game.setWinner(playerActing);
+        }else{
+            Round nextRound = new Round();
+            nextRound.setStartingPlayer(playerActing);
+
+            RoundState nextRoundState = new RoundState();
+            nextRoundState.setMaxBid(0);
+            nextRoundState.setRoundPhase(RoundPhase.LAYING);
+            nextRoundState.setPlayerToAct(nextRound.getStartingPlayer());
+            nextRoundState.setPlayerStates(game.getPlayers().stream()
+                    .filter(fPlayer -> fPlayer.hasCards())
+                    .map(player -> PlayerState.create(player))
+                    .collect(Collectors.toList()));
+
+            nextRound.setRoundStates(Lists.newArrayList(nextRoundState));
+            game.getRounds().add(nextRound);
+        }
     }
 
     private void loseRound(Game game, Player playerActing) {
