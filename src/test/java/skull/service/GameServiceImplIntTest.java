@@ -46,13 +46,13 @@ public class GameServiceImplIntTest {
     @Test
     public void canAddPlayer(){
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
     }
 
     @Test
     public void canStartGame() throws InsufficientPlayersException {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
     }
 
@@ -66,7 +66,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void canLayCard() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -77,7 +77,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotLayCardAsGameNotYetStarted() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
 
         Player startingPlayer = game.getPlayers().get(0);
         this.serviceUnderTest.layCard(game.getId(), startingPlayer.getId(), Card.SKULL);
@@ -87,7 +87,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotLayCardAsActingOutOfTurn() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player otherPlayer = game.getPlayers().get(1);
@@ -98,7 +98,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotLayCardAsCardNotInHand() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -112,7 +112,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotLayCardAsWrongPhase() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -127,7 +127,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void canBid() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -142,7 +142,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotBidAsGameNotYetStarted() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
 
         Player startingPlayer = game.getPlayers().get(0);
         this.serviceUnderTest.bid(game.getId(), startingPlayer.getId(), 1);
@@ -152,7 +152,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotBidAsActingOutOfTurn() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -166,7 +166,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotBidAsBidTooLow() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -181,7 +181,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotBidAsWrongPhase() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -197,8 +197,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void canOptOutOfBidding() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -215,7 +215,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotOptOutOfBiddingAsGameNotYetStarted() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
 
         Player startingPlayer = game.getPlayers().get(0);
         this.serviceUnderTest.optOutOfBidding(game.getId(), startingPlayer.getId());
@@ -225,8 +225,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotOptOutOfBiddingAsActingOutOfTurn() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -243,8 +243,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void canOptOutOfBiddingAndPlayContinues() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -271,8 +271,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotOptOutOfBiddingAsWrongPhase() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -291,8 +291,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void canFlipOwnCards() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -319,7 +319,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotFlipOwnCardsAsGameNotYetStarted() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
 
         Player startingPlayer = game.getPlayers().get(0);
         this.serviceUnderTest.flipOwnCards(game.getId(), startingPlayer.getId());
@@ -329,8 +329,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotFlipOwnCardsAsActingOutOfTurn() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -357,8 +357,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotFlipOwnCardsAsWrongPhase() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -384,8 +384,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotFlipOwnCardsAsAlreadyFlipped() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -413,8 +413,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void canFlipOtherPlayerCard() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -444,7 +444,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotFlipOtherPlayerCardAsGameNotYetStarted() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
 
         Player startingPlayer = game.getPlayers().get(0);
         Player secondPlayer = game.getPlayers().get(1);
@@ -455,8 +455,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotFlipOtherPlayerCardAsActingOutOfTurn() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -483,8 +483,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotFlipOtherPlayerCardAsWrongPhase() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -510,8 +510,8 @@ public class GameServiceImplIntTest {
     @Transactional
     public void cannotFlipOtherPlayerCardAsNotFlippedOwnCards() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -538,8 +538,8 @@ public class GameServiceImplIntTest {
      @Transactional
      public void cannotFlipOtherPlayerCardAsAlreadyFlipped() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), THIRD_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), THIRD_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -568,7 +568,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void canLoseGameByLosingSeveralRounds() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);
@@ -611,7 +611,7 @@ public class GameServiceImplIntTest {
     @Transactional
     public void canWinGameByWinningSeveralRounds() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
-        this.serviceUnderTest.addPlayer(game.getId(), SECOND_PLAYER_NAME);
+        this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
 
         Player startingPlayer = game.getPlayers().get(0);

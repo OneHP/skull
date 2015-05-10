@@ -44,9 +44,9 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
-    public Game addPlayer(Long gameId, String playerName) {
+    public Game addPlayer(String key, String playerName) {
 
-        final Game game = this.gameRepository.findOne(gameId);
+        final Game game = this.gameRepository.findOneByKey(key);
         game.getPlayers().add(Player.create(playerName));
 
         return this.gameRepository.save(game);

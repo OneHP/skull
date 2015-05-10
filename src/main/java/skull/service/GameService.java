@@ -11,7 +11,7 @@ public interface GameService {
 
     Game getGame(Long id);
 
-    Game addPlayer(Long gameId, String playerName);
+    Game addPlayer(String key, String playerName);
 
     Game startGame(Long gameId) throws InsufficientPlayersException;
 
