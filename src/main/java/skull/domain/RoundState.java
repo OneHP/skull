@@ -1,6 +1,7 @@
 package skull.domain;
 
 import com.google.common.collect.Lists;
+import skull.domain.action.Action;
 
 import javax.persistence.*;
 import java.util.List;
@@ -19,6 +20,9 @@ public class RoundState extends PersistableDomainObject{
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Player playerToAct;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Action previousAction;
 
     public RoundState(){
 
@@ -54,6 +58,14 @@ public class RoundState extends PersistableDomainObject{
 
     public void setPlayerToAct(Player playerToAct) {
         this.playerToAct = playerToAct;
+    }
+
+    public Action getPreviousAction() {
+        return previousAction;
+    }
+
+    public void setPreviousAction(Action previousAction) {
+        this.previousAction = previousAction;
     }
 
     public RoundState copy(){

@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import skull.domain.*;
+import skull.domain.action.*;
 import skull.repo.GameRepository;
 import skull.repo.PlayerRepository;
 import skull.service.exception.*;
@@ -116,6 +117,7 @@ public class GameServiceImpl implements GameService {
         nextRoundPlayerState.getHand().playCard(card);
 
         nextRoundState.setPlayerToAct(nextPlayerInTurn(game, nextRoundState, playerActing));
+        nextRoundState.setPreviousAction(LayCard.create(playerActing,card));
         round.getRoundStates().add(nextRoundState);
 
         return this.gameRepository.save(game);
@@ -164,6 +166,7 @@ public class GameServiceImpl implements GameService {
         nextRoundPlayerState.setBid(bid);
 
         nextRoundState.setPlayerToAct(nextPlayerInTurn(game, nextRoundState, playerActing));
+        nextRoundState.setPreviousAction(Bid.create(playerActing,bid));
         round.getRoundStates().add(nextRoundState);
 
         return this.gameRepository.save(game);
@@ -205,6 +208,7 @@ public class GameServiceImpl implements GameService {
            nextRoundState.setRoundPhase(RoundPhase.RESOLUTION);
         }
 
+        nextRoundState.setPreviousAction(OptOutOfBidding.create(playerActing));
         round.getRoundStates().add(nextRoundState);
 
         return this.gameRepository.save(game);
@@ -247,6 +251,7 @@ public class GameServiceImpl implements GameService {
             winRound(game, playerActing);
         }
 
+        nextRoundState.setPreviousAction(FlipOwnCards.create(playerActing));
         round.getRoundStates().add(nextRoundState);
 
         return this.gameRepository.save(game);
@@ -301,6 +306,7 @@ public class GameServiceImpl implements GameService {
             winRound(game,playerActing);
         }
 
+        nextRoundState.setPreviousAction(FlipOtherPlayersCard.create(playerActing,otherPlayer,index));
         round.getRoundStates().add(nextRoundState);
 
         return this.gameRepository.save(game);
