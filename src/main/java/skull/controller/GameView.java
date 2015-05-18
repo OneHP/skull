@@ -14,6 +14,7 @@ public class GameView {
     private boolean started;
     private PlayerView winner;
     private List<PlayerView> players;
+    private List<RoundView> rounds;
 
     public GameView() {
 
@@ -35,6 +36,11 @@ public class GameView {
         view.players = game.getPlayers().stream()
                 .map(PlayerView::fromPlayer)
                 .collect(Collectors.toList());
+        if(null!=game.getRounds()) {
+            view.rounds = game.getRounds().stream()
+                    .map(RoundView::fromRound)
+                    .collect(Collectors.toList());
+        }
         return view;
     }
 
@@ -76,5 +82,13 @@ public class GameView {
 
     public void setPlayers(List<PlayerView> players) {
         this.players = players;
+    }
+
+    public List<RoundView> getRounds() {
+        return rounds;
+    }
+
+    public void setRounds(List<RoundView> rounds) {
+        this.rounds = rounds;
     }
 }

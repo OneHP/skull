@@ -1,6 +1,5 @@
 package skull.domain;
 
-import com.google.common.collect.Lists;
 import skull.domain.action.Action;
 
 import javax.persistence.*;

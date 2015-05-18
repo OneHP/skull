@@ -2,6 +2,6 @@ package skull.domain;
 
 public enum Card{
 
-    SKULL,ROSE;
+    SKULL,ROSE,UNKNOWN;
 
 }
