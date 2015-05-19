@@ -55,8 +55,12 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
-    public Game startGame(Long gameId) throws InsufficientPlayersException {
+    public Game startGame(Long gameId) throws InsufficientPlayersException, GameAlreadyStartedException {
         final Game game = this.gameRepository.findOne(gameId);
+
+        if(game.getStarted()){
+            throw new GameAlreadyStartedException();
+        }
 
         final int numberOfPlayers = game.getPlayers().size();
         if(numberOfPlayers < 2){

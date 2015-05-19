@@ -50,14 +50,14 @@ public class GameServiceImplIntTest {
     }
 
     @Test
-    public void canStartGame() throws InsufficientPlayersException {
+    public void canStartGame() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
         this.serviceUnderTest.addPlayer(game.getKey(), SECOND_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
     }
 
     @Test(expected = InsufficientPlayersException.class)
-    public void failsToStartGameWithOnePlayer() throws InsufficientPlayersException {
+    public void failsToStartGameWithOnePlayer() throws Exception {
         final Game game = this.serviceUnderTest.createGame(HOST_PLAYER_NAME);
         this.serviceUnderTest.startGame(game.getId());
     }

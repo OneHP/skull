@@ -13,7 +13,7 @@ public interface GameService {
 
     Game addPlayer(String key, String playerName);
 
-    Game startGame(Long gameId) throws InsufficientPlayersException;
+    Game startGame(Long gameId) throws InsufficientPlayersException, GameAlreadyStartedException;
 
     Game layCard(Long gameId, Long playerId, Card card) throws PlayerActingOutOfTurnException, IncorrectRoundPhaseException, CardNotInHandException, GameNotStartedException;
 

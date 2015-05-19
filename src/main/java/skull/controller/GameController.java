@@ -30,5 +30,11 @@ public class GameController {
         return GameView.fromGame(game, Iterables.getLast(game.getPlayers()).getId());
     }
 
+    @RequestMapping(value = "/game/{id}/start")
+    public GameView start(@PathVariable Long id, @RequestParam("playerId") Long playerId) throws Exception{
+        final Game game = this.gameService.startGame(id);
+        return GameView.fromGame(game, playerId);
+    }
+
 
 }
