@@ -38,7 +38,7 @@ public class GameView {
                 .collect(Collectors.toList());
         if(null!=game.getRounds()) {
             view.rounds = game.getRounds().stream()
-                    .map(RoundView::fromRound)
+                    .map(round -> RoundView.fromRound(round,playerId))
                     .collect(Collectors.toList());
         }
         return view;

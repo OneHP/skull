@@ -14,10 +14,10 @@ public class RoundView {
     public RoundView() {
     }
 
-    public static RoundView fromRound(Round round){
+    public static RoundView fromRound(Round round,Long playerId){
         RoundView view = new RoundView();
         view.roundStates = round.getRoundStates().stream()
-                .map(RoundStateView::fromRoundState)
+                .map(state -> RoundStateView.fromRoundState(state,playerId))
                 .collect(Collectors.toList());
         return view;
     }

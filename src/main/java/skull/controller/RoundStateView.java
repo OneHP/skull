@@ -1,9 +1,12 @@
 package skull.controller;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.google.common.collect.Lists;
 import skull.controller.action.ActionView;
 import skull.controller.action.BidView;
 import skull.controller.action.FlipOtherPlayersCardView;
+import skull.domain.Card;
+import skull.domain.PlayerState;
 import skull.domain.RoundPhase;
 import skull.domain.RoundState;
 import skull.domain.action.*;
@@ -16,6 +19,9 @@ public class RoundStateView {
 
     private int maxBid;
 
+    private List<Card> hand;
+    private List<Card> playedCards;
+
     private List<PlayerStateView> playerStates;
 
     private RoundPhase roundPhase;
@@ -27,9 +33,22 @@ public class RoundStateView {
     public RoundStateView() {
     }
 
-    public static RoundStateView fromRoundState(RoundState roundState){
+    public static RoundStateView fromRoundState(RoundState roundState, Long playerId){
         RoundStateView view = new RoundStateView();
         view.maxBid = roundState.getMaxBid();
+
+        PlayerState playerState = roundState.getPlayerStates().stream()
+                .filter(state -> state.getPlayer().getId().equals(playerId))
+                .findFirst().get();
+        view.hand = Lists.newArrayList();
+        for(int i = 0; i < playerState.getHand().getSkulls(); i++){
+            view.hand.add(Card.SKULL);
+        }
+        for(int i = 0; i < playerState.getHand().getRoses(); i++){
+            view.hand.add(Card.ROSE);
+        }
+        view.playedCards = playerState.getCardsOnTable();
+
         view.playerStates = roundState.getPlayerStates().stream()
                 .map(PlayerStateView::fromPlayerState)
                 .collect(Collectors.toList());
@@ -67,6 +86,22 @@ public class RoundStateView {
 
     public void setMaxBid(int maxBid) {
         this.maxBid = maxBid;
+    }
+
+    public List<Card> getHand() {
+        return hand;
+    }
+
+    public void setHand(List<Card> hand) {
+        this.hand = hand;
+    }
+
+    public List<Card> getPlayedCards() {
+        return playedCards;
+    }
+
+    public void setPlayedCards(List<Card> playedCards) {
+        this.playedCards = playedCards;
     }
 
     public List<PlayerStateView> getPlayerStates() {
