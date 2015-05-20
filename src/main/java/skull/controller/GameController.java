@@ -50,8 +50,14 @@ public class GameController {
     }
 
     @RequestMapping(value = "/game/{gameId}/player/{playerId}/out")
-    public GameView bid(@PathVariable Long gameId, @PathVariable Long playerId) throws Exception{
+    public GameView optOut(@PathVariable Long gameId, @PathVariable Long playerId) throws Exception{
         final Game game = this.gameService.optOutOfBidding(gameId, playerId);
+        return GameView.fromGame(game, playerId);
+    }
+
+    @RequestMapping(value = "/game/{gameId}/player/{playerId}/flip-own")
+    public GameView flipOwn(@PathVariable Long gameId, @PathVariable Long playerId) throws Exception{
+        final Game game = this.gameService.flipOwnCards(gameId, playerId);
         return GameView.fromGame(game, playerId);
     }
 }
