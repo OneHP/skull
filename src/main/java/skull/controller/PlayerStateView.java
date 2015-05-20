@@ -1,6 +1,8 @@
 package skull.controller;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import skull.domain.Card;
 import skull.domain.Hand;
@@ -9,7 +11,7 @@ import skull.domain.PlayerState;
 import java.util.List;
 
 @JsonAutoDetect
-public class PlayerStateView {
+public class PlayerStateView extends ViewSupport{
 
     private PlayerView player;
 
@@ -27,9 +29,9 @@ public class PlayerStateView {
         PlayerStateView view = new PlayerStateView();
         view.player = PlayerView.fromPlayer(playerState.getPlayer());
         Hand hand = playerState.getHand();
-        List<Card> playedCards = playerState.getCardsOnTable();
+        List<Card> playedCards = MoreObjects.firstNonNull(playerState.getCardsOnTable(), ImmutableList.<Card>of());
         int numberOfPlayedCards = playedCards.size();
-        view.cardsInHand = (hand.getRoses() + hand.getSkulls()) - numberOfPlayedCards;
+        view.cardsInHand = (hand.getRoses() + hand.getSkulls());
         view.cardsOnTable = Lists.newArrayList();
         for(int i = 0; i < numberOfPlayedCards; i++){
             view.cardsOnTable.add(i >= (numberOfPlayedCards - playerState.getNumberOfRevealedCards())

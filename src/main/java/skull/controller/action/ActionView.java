@@ -2,10 +2,11 @@ package skull.controller.action;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import skull.controller.PlayerView;
+import skull.controller.ViewSupport;
 import skull.domain.action.Action;
 
 @JsonAutoDetect
-public class ActionView {
+public class ActionView extends ViewSupport{
 
     private PlayerView player;
     private String action;

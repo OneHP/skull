@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import skull.domain.Card;
 import skull.domain.Game;
 import skull.service.GameService;
 
@@ -33,6 +34,12 @@ public class GameController {
     @RequestMapping(value = "/game/{id}/start")
     public GameView start(@PathVariable Long id, @RequestParam("playerId") Long playerId) throws Exception{
         final Game game = this.gameService.startGame(id);
+        return GameView.fromGame(game, playerId);
+    }
+
+    @RequestMapping(value = "/game/{gameId}/player/{playerId}/lay")
+    public GameView layCard(@PathVariable Long gameId, @PathVariable Long playerId, @RequestBody Card card) throws Exception{
+        final Game game = this.gameService.layCard(gameId,playerId,card);
         return GameView.fromGame(game, playerId);
     }
 

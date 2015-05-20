@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @JsonAutoDetect
-public class GameView {
+public class GameView extends ViewSupport{
 
     private Long id;
     private String key;

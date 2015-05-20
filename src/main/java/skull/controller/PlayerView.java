@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import skull.domain.Player;
 
 @JsonAutoDetect
-public class PlayerView {
+public class PlayerView extends ViewSupport{
 
     private Long id;
     private String name;

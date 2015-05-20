@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @JsonAutoDetect
-public class RoundStateView {
+public class RoundStateView extends ViewSupport{
 
     private int maxBid;
 

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class PlayerState extends PersistableDomainObject{
@@ -89,7 +90,8 @@ public class PlayerState extends PersistableDomainObject{
     public PlayerState copy(){
         PlayerState playerState = new PlayerState();
         playerState.setBid(this.bid);
-        playerState.setCardsOnTable(this.cardsOnTable);
+        playerState.setCardsOnTable(this.cardsOnTable.stream()
+                .collect(Collectors.toList())); //A copy of the list of cards, not the original list
         playerState.setNumberOfRevealedCards(this.numberOfRevealedCards);
         playerState.setOutOfBidding(this.outOfBidding);
         playerState.setPlayer(this.player);

@@ -3,11 +3,12 @@ package skull.controller;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import skull.domain.Round;
 
+import javax.swing.text.View;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @JsonAutoDetect
-public class RoundView {
+public class RoundView extends ViewSupport{
 
     private List<RoundStateView> roundStates;
 
