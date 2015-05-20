@@ -60,4 +60,10 @@ public class GameController {
         final Game game = this.gameService.flipOwnCards(gameId, playerId);
         return GameView.fromGame(game, playerId);
     }
+
+    @RequestMapping(value = "/game/{gameId}/player/{playerId}/flip-other")
+    public GameView flipOther(@PathVariable Long gameId, @PathVariable Long playerId, @RequestBody FlipOtherPlayersCardRequest request) throws Exception{
+        final Game game = this.gameService.flipOtherPlayerCard(gameId, playerId,request.getTargetPlayerId(),request.getIndex());
+        return GameView.fromGame(game, playerId);
+    }
 }
