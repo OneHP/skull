@@ -45,9 +45,13 @@ public class GameController {
 
     @RequestMapping(value = "/game/{gameId}/player/{playerId}/bid")
     public GameView bid(@PathVariable Long gameId, @PathVariable Long playerId, @RequestBody int bid) throws Exception{
-        final Game game = this.gameService.bid(gameId,playerId,bid);
+        final Game game = this.gameService.bid(gameId, playerId, bid);
         return GameView.fromGame(game, playerId);
     }
 
-
+    @RequestMapping(value = "/game/{gameId}/player/{playerId}/out")
+    public GameView bid(@PathVariable Long gameId, @PathVariable Long playerId) throws Exception{
+        final Game game = this.gameService.optOutOfBidding(gameId, playerId);
+        return GameView.fromGame(game, playerId);
+    }
 }
