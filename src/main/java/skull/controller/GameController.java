@@ -39,7 +39,13 @@ public class GameController {
 
     @RequestMapping(value = "/game/{gameId}/player/{playerId}/lay")
     public GameView layCard(@PathVariable Long gameId, @PathVariable Long playerId, @RequestBody Card card) throws Exception{
-        final Game game = this.gameService.layCard(gameId,playerId,card);
+        final Game game = this.gameService.layCard(gameId, playerId, card);
+        return GameView.fromGame(game, playerId);
+    }
+
+    @RequestMapping(value = "/game/{gameId}/player/{playerId}/bid")
+    public GameView bid(@PathVariable Long gameId, @PathVariable Long playerId, @RequestBody int bid) throws Exception{
+        final Game game = this.gameService.bid(gameId,playerId,bid);
         return GameView.fromGame(game, playerId);
     }
 
