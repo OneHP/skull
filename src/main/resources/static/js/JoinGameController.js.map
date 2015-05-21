@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "JoinGameController.js",
+  "sourceRoot": "../../../coffee/home",
+  "sources": [
+    "JoinGameController.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;AAAA,EAAA,OAAO,CAAC,MAAR,CAAe,aAAf,CACA,CAAC,UADD,CACY,oBADZ,EACiC;IAAC,QAAD,EAAU,WAAV,EAAsB,SAAC,MAAD,EAAQ,SAAR,GAAA;aAEnD,MAAM,CAAC,IAAP,GAAc,SAAA,GAAA;eACZ,SAAS,CAAC,IAAV,CAAe,MAAf,EADY;MAAA,EAFqC;IAAA,CAAtB;GADjC,CAAA,CAAA;AAAA"
+}

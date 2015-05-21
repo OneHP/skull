@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "NewGameController.js",
+  "sourceRoot": "../../../coffee/home",
+  "sources": [
+    "NewGameController.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;AAAA,EAAA,OAAO,CAAC,MAAR,CAAe,aAAf,CACA,CAAC,UADD,CACY,mBADZ,EACgC;IAAC,QAAD,EAAU,WAAV,EAAsB,SAAC,MAAD,EAAQ,SAAR,GAAA;aAElD,MAAM,CAAC,IAAP,GAAc,SAAA,GAAA;eACZ,SAAS,CAAC,IAAV,CAAe,MAAf,EADY;MAAA,EAFoC;IAAA,CAAtB;GADhC,CAAA,CAAA;AAAA"
+}
